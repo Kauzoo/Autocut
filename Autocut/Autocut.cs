@@ -7,24 +7,11 @@
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to Autocut");
-            Console.WriteLine("Enter input video file path:");
-            var vid_path = Console.ReadLine();
-            if (vid_path == null)
-            {
-                Console.WriteLine("Missing Video File Path. Exiting");
-                return;
-            }
-
-            Console.WriteLine("Enter timestamp file path:");
-            var tmp_path = Console.ReadLine();
-            if (tmp_path == null)
-            {
-                Console.WriteLine("Missing Timestamp File Path. Exiting");
-                return;
-            }
-
-            run(vid_path, ParseInput(tmp_path));
+            Console.Title = "Autocut | powered by ffmpeg";
+            if (args.Length == 0)
+                ReadConsole();
+            else
+                ParseCommandLineArguments(args);
         }
 
         public struct Segment
@@ -77,6 +64,11 @@
             public override string ToString() => $"{Hour}:{Minute}:{Second}";
         }
 
+        /// <summary>
+        /// Parse tsv file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static Segment[] ParseInput(string path)
         {
             var content = File.ReadAllLines(path);
