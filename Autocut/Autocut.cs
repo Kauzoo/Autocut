@@ -7,11 +7,13 @@
     {
         public static void Main(string[] args)
         {
+            IO.IOPaths con;
             Console.Title = "Autocut | powered by ffmpeg";
             if (args.Length == 0)
-                IO.ReadConsole();
+                con = IO.ReadConsole();
             else
-                IO.ParseCommandLineArguments(args);
+                con = IO.ParseCommandLineArguments(args);
+            run(con.InputVid, ParseTimestamps(con));
         }
 
         internal struct Segment

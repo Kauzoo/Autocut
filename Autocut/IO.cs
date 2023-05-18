@@ -143,7 +143,7 @@ public static class IO
     }
     #endregion
 
-    public static void ParseCommandLineArguments(string[] args)
+    public static IOPaths ParseCommandLineArguments(string[] args)
     {
         /**
          * Planned args:
