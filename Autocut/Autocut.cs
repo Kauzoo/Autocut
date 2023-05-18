@@ -3,55 +3,39 @@
     using System.Diagnostics;
     using System.IO;
 
-    public static class Autocut
+    internal static class Autocut
     {
         public static void Main(string[] args)
         {
             Console.Title = "Autocut | powered by ffmpeg";
             if (args.Length == 0)
-                ReadConsole();
+                IO.ReadConsole();
             else
-                ParseCommandLineArguments(args);
+                IO.ParseCommandLineArguments(args);
         }
 
-        public struct Segment
+        internal struct Segment
         {
-            public Timestamp Start, End;
             public string OutPath;
-
-            public Segment(string line)
-            {
-                var s = line.Split("\t");
-                if (s.Length != 3)
-                {
-                    Console.WriteLine("Error while parsing segment string");
-                    throw new FormatException();
-                }
-
-                Start = new Timestamp(s[0]);
-                End = new Timestamp(s[1]);
-                OutPath = s[2];
-            }
+            public Timestamp Start, End;
         }
 
-        public struct Timestamp
+        internal readonly struct Timestamp
         {
-            public string Hour, Minute, Second;
+            public readonly string Hour, Minute, Second;
 
             public Timestamp(string time)
             {
-                var times = time.Split(":");
+                var times = time.Split(':');
                 if (times.Length != 3)
                 {
-                    Console.WriteLine("Error in timestamp specification");
-                    throw new FormatException();
+                    throw new FormatException("Timestamp to long or short");
                 }
 
                 foreach (var t in times)
                 {
                     if (Validate(t)) continue;
-                    Console.WriteLine("Error in timestamp specification");
-                    throw new FormatException();
+                    throw new FormatException("Timestamp contains non Digit character");
                 }
 
                 Hour = times[0];
@@ -64,28 +48,88 @@
             public override string ToString() => $"{Hour}:{Minute}:{Second}";
         }
 
-        /// <summary>
-        /// Parse tsv file
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static Segment[] ParseInput(string path)
+        internal static Segment[] ParseTimestamps(IO.IOPaths con)
         {
-            var content = File.ReadAllLines(path);
+            char delim;
+            switch (con.TimestampType)
+            {
+                case IO.TimestampType.TSV:
+                    delim = '\t';
+                    break;
+                case IO.TimestampType.CSV:
+                    throw new NotImplementedException();
+                default:
+                    Console.WriteLine("ERROR: Unknown error");
+                    throw new Exception();
+            }
+
+            var content = File.ReadAllLines(con.Timestamp);
             var segments = new Segment[content.Length];
             for (var i = 0; i < content.Length; i++)
             {
-                segments[i] = new Segment(content[i]);
+                segments[i] = new Segment();
+                var s = content[i].Split(delim);
+                if (s.Length != 3)
+                {
+                    Console.WriteLine($"ERROR: Failed to parse Segment at Line {i + 1}. To many or few elements");
+                    throw new FormatException();
+                }
+
+                if (Path.IsPathFullyQualified(s[0]))
+                {
+                    Console.WriteLine($"Detected full path at Line {i + 1}");
+                    if (!Path.HasExtension(s[0]) || Path.GetExtension(s[0]) != con.VidExtension)
+                    {
+                        Console.WriteLine($"ERROR: Missing file extension or non matching file extension");
+                        throw new FormatException();
+                    }
+
+                    segments[i].OutPath = s[0];
+                }
+                else
+                {
+                    foreach (var c in Path.GetInvalidFileNameChars())
+                    {
+                        if (!s[0].Contains(c)) continue;
+                        Console.WriteLine($"ERROR: Filename {s[0]} at Line {i + 1} contains invalid character {c}");
+                        throw new FormatException();
+                    }
+
+                    // TODO Handle file extension
+                    segments[i].OutPath = con.Outpath + s[0] + con.VidExtension;
+                }
+
+                try
+                {
+                    segments[i].Start = new Timestamp(s[1]);
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine($"ERROR: Failed to parse start Timestamp at Line {i + 1}. {e.Message}");
+                    throw;
+                }
+
+                try
+                {
+                    segments[i].End = new Timestamp(s[2]);
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine($"ERROR: Failed to parse end Timestamp at Line {i + 1}. {e.Message}");
+                    throw;
+                }
             }
 
             return segments;
         }
 
-        public static void run(string inputPath, Segment[] segments)
+        internal static void run(string inputPath, Segment[] segments)
         {
+            // TODO Add support for encoding instead of copy
+            
             foreach (var seg in segments)
             {
-                Process process = new Process();
+                var process = new Process();
                 // Configure the process using the StartInfo properties.
                 process.StartInfo.FileName = "ffmpeg.exe";
                 process.StartInfo.Arguments = $"-ss {seg.Start} -to {seg.End} -i {inputPath} -c copy {seg.OutPath}";
@@ -93,6 +137,7 @@
                 process.Start();
                 process.WaitForExit(); // Waits here for the process to exit.    
             }
+
             Console.WriteLine("Done");
         }
     }

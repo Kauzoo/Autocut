@@ -1,65 +1,71 @@
 ﻿using System.Diagnostics;
+using System.Net;
 
 namespace Autocut;
 
-internal static class IO
+public static class IO
 {
     // TODO Make sure Console Fore- and Background color are always contrasting
 
     #region ConsoleIO
 
-    internal static void ReadConsole()
+    public enum TimestampType
     {
-        Console.WriteLine("Welcome to Autocut");
-
-
-        Console.WriteLine("Enter timestamp file path:");
-        var tmp_path = Console.ReadLine();
-        if (tmp_path is null)
-        {
-            Console.WriteLine("Missing Timestamp File Path. Exiting");
-            return;
-        }
-
-        Console.WriteLine("Enter output path:");
-        var out_path = Console.ReadLine();
-        if (out_path is null)
-        {
-        }
-
-        run(vid_path, ParseInput(tmp_path));
+        TSV, CSV, NULL
     }
 
-    internal static string ReadInputVid()
+    public struct IOPaths
+    {
+        public string InputVid;
+        public string Timestamp;
+        public string Outpath;
+        public TimestampType TimestampType;
+        public string VidExtension;
+
+        public IOPaths(string vid, string time, string opath, TimestampType timestampType, string vidExtension)
+        {
+            InputVid = vid;
+            Timestamp = time;
+            Outpath = opath;
+            TimestampType = timestampType;
+            VidExtension = vidExtension;
+        }
+    }
+    
+    public static IOPaths ReadConsole()
+    {
+        Console.WriteLine("Welcome to Autocut");
+        var inputVid = ReadInputVid();
+        var tstamp = ReadTimestampFile();
+        var outpath = ReadOutputPath();
+        return new IOPaths(inputVid.path, tstamp.path, outpath, tstamp.type, inputVid.extension);
+    }
+
+    internal static (string path, string extension) ReadInputVid()
     {
         Console.WriteLine("Enter input video file path:");
         var vidPath = Console.ReadLine();
         if (!ValidateVidPath(vidPath))
             ReadInputVid();
-        return vidPath;
+        return (vidPath, Path.GetExtension(vidPath))!;
     }
 
-    internal static string ReadTimestampFile()
+    internal static (string path, TimestampType type) ReadTimestampFile()
     {
-        while (true)
-        {
-            Console.WriteLine("Enter input video file path:");
-            var tmpPath = Console.ReadLine();
-            if (tmpPath != null)
-            {
-                if (!ValidateVidPath(tmpPath)) ReadInputVid();
-                return tmpPath;
-            }
-
-            Console.WriteLine("Missing Video File Path. Exiting");
-        }
-
-        throw new NotImplementedException();
+        Console.WriteLine("Enter timestamp file path:");
+        var tmpPath = Console.ReadLine();
+        if (!ValidateTimestampPath(tmpPath, out var type))
+            ReadTimestampFile();
+        return (tmpPath, type)!;
     }
 
     internal static string ReadOutputPath()
     {
-        throw new NotImplementedException();
+        Console.WriteLine("Enter output path (Folder):");
+        var outPath = Console.ReadLine();
+        if (!ValidateOutputPath(outPath))
+            ReadOutputPath();
+        return outPath!;
     }
 
     #endregion
@@ -105,13 +111,39 @@ internal static class IO
         return true;
     }
 
-    private static bool ValidateTimestampPath(string path)
+    private static bool ValidateTimestampPath(string? path, out TimestampType timestampType)
     {
+        timestampType = TimestampType.NULL;
+        if (!ValidatePath(path))
+            return false;
+        // TODO Add .csv support
+        if (Path.HasExtension(path) && Path.GetExtension(path) == "tsv")
+        {
+            timestampType = TimestampType.TSV;
+            return true;
+        }
+
+        Console.WriteLine("ERROR: File or Path does not have an extension or is not a .tsv");
+        return false;
     }
 
+    private static bool ValidateOutputPath(string? path)
+    {
+        if (!ValidatePath(path))
+            return false;
+        if (File.Exists(path))
+        {
+            Console.WriteLine("ERROR: Path is a File. Expected Directory");
+            return false;
+        }
+
+        if (!Path.EndsInDirectorySeparator(path))
+            path += Path.DirectorySeparatorChar;
+        return true;
+    }
     #endregion
 
-    internal static void ParseCommandLineArguments(string[] args)
+    public static void ParseCommandLineArguments(string[] args)
     {
         /**
          * Planned args:
@@ -122,4 +154,9 @@ internal static class IO
          */
         throw new NotImplementedException();
     }
+}
+
+public enum VidExtension
+{
+    mp4
 }
