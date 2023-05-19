@@ -214,7 +214,7 @@ public static class IO
 
     public static void printHelp()
     {
-        Console.WriteLine();
+        throw new NotImplementedException();
     }
 }
 
