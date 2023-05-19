@@ -45,7 +45,7 @@ public static class IO
     {
         Console.WriteLine("Enter input video file path:");
         var vidPath = Console.ReadLine();
-        if (!ValidateVidPath(vidPath))
+        if (!ValidateVidPath(ref vidPath))
             ReadInputVid();
         return (vidPath, Path.GetExtension(vidPath))!;
     }
@@ -54,7 +54,7 @@ public static class IO
     {
         Console.WriteLine("Enter timestamp file path:");
         var tmpPath = Console.ReadLine();
-        if (!ValidateTimestampPath(tmpPath, out var type))
+        if (!ValidateTimestampPath(ref tmpPath, out var type))
             ReadTimestampFile();
         return (tmpPath, type)!;
     }
@@ -63,7 +63,7 @@ public static class IO
     {
         Console.WriteLine("Enter output path (Folder):");
         var outPath = Console.ReadLine();
-        if (!ValidateOutputPath(outPath))
+        if (!ValidateOutputPath(ref outPath))
             ReadOutputPath();
         return outPath!;
     }
@@ -72,13 +72,15 @@ public static class IO
 
     #region Validation
 
-    private static bool ValidatePath(string? path)
+    private static bool ValidateFilePath(ref string? path)
     {
         if (path is null)
         {
             Console.WriteLine("ERROR: Missing Path");
             return false;
         }
+
+        path = RemoveQuotes(path);
 
         if (!Path.Exists(path) || !File.Exists(path))
         {
@@ -96,9 +98,35 @@ public static class IO
         return true;
     }
 
-    private static bool ValidateVidPath(string? path)
+    private static bool ValidatePath(ref string? path)
     {
-        if (!ValidatePath(path))
+        if (path is null)
+        {
+            Console.WriteLine("ERROR: Missing Path");
+            return false;
+        }
+
+        path = RemoveQuotes(path);
+
+        if (!Path.Exists(path))
+        {
+            Console.WriteLine("ERROR: Path does not exist");
+            return false;
+        }
+
+        if (!Path.IsPathFullyQualified(path))
+        {
+            // TODO Add examples of fully qualified paths
+            Console.WriteLine("ERROR: Path is not fully qualified");
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool ValidateVidPath(ref string? path)
+    {
+        if (!ValidateFilePath(ref path))
             return false;
 
         // TODO Add validation for supported video file extensions
@@ -111,13 +139,13 @@ public static class IO
         return true;
     }
 
-    private static bool ValidateTimestampPath(string? path, out TimestampType timestampType)
+    private static bool ValidateTimestampPath(ref string? path, out TimestampType timestampType)
     {
         timestampType = TimestampType.NULL;
-        if (!ValidatePath(path))
+        if (!ValidateFilePath(ref path))
             return false;
         // TODO Add .csv support
-        if (Path.HasExtension(path) && Path.GetExtension(path) == "tsv")
+        if (Path.HasExtension(path) && Path.GetExtension(path) == ".tsv")
         {
             timestampType = TimestampType.TSV;
             return true;
@@ -127,9 +155,9 @@ public static class IO
         return false;
     }
 
-    private static bool ValidateOutputPath(string? path)
+    private static bool ValidateOutputPath(ref string? path)
     {
-        if (!ValidatePath(path))
+        if (!ValidatePath(ref path))
             return false;
         if (File.Exists(path))
         {
@@ -137,11 +165,20 @@ public static class IO
             return false;
         }
 
-        if (!Path.EndsInDirectorySeparator(path))
+        if (!Path.EndsInDirectorySeparator(path!))
             path += Path.DirectorySeparatorChar;
         return true;
     }
     #endregion
+
+    private static string RemoveQuotes(string path)
+    {
+        if (path[0] == '"' && path[path.Length - 1] == '"')
+        {
+            return path.Substring(1, (path.Length - 2));
+        }
+        return path;
+    }
 
     public static IOPaths ParseCommandLineArguments(string[] args)
     {

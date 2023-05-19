@@ -94,6 +94,15 @@
                     {
                         if (!s[0].Contains(c)) continue;
                         Console.WriteLine($"ERROR: Filename {s[0]} at Line {i + 1} contains invalid character {c}");
+                        try
+                        {
+                            new Timestamp(s[0]);
+                            Console.WriteLine($"ERROR: Detected possible Timestamp at Line {i + 1} Column 0. Expected Filename or Path.");
+                        }
+                        catch (FormatException e)
+                        {
+                            throw e;
+                        }
                         throw new FormatException();
                     }
 
