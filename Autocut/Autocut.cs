@@ -13,7 +13,7 @@
                 con = IO.ReadConsole();
             else
                 con = IO.ParseCommandLineArguments(args);
-            run(con.InputVid, ParseTimestamps(con));
+            run(con, ParseTimestamps(con));
         }
 
         internal struct Segment
@@ -77,19 +77,26 @@
                     throw new FormatException();
                 }
 
-                if (Path.IsPathFullyQualified(s[0]))
+                // Parse column elements
+                // Attempt to parse first colum as filename or FullyQualifiedPath
+                string? segPath = s[0];
+                segPath = IO.RemoveQuotes(segPath);
+                if (Path.IsPathFullyQualified(segPath))
                 {
+                    // Treat as path
                     Console.WriteLine($"Detected full path at Line {i + 1}");
-                    if (!Path.HasExtension(s[0]) || Path.GetExtension(s[0]) != con.VidExtension)
+                    // TODO Stream conversion is not supported yet, so differing extensions might break things
+                    if (!Path.HasExtension(segPath) || Path.GetExtension(segPath) != con.VidExtension)
                     {
                         Console.WriteLine($"ERROR: Missing file extension or non matching file extension");
                         throw new FormatException();
                     }
 
-                    segments[i].OutPath = s[0];
+                    segments[i].OutPath = IO.AddQuotes(segPath!);
                 }
                 else
                 {
+                    // Treat as filename
                     foreach (var c in Path.GetInvalidFileNameChars())
                     {
                         if (!s[0].Contains(c)) continue;
@@ -107,9 +114,10 @@
                     }
 
                     // TODO Handle file extension
-                    segments[i].OutPath = con.Outpath + s[0] + con.VidExtension;
+                    segments[i].OutPath = IO.AddQuotes(con.Outpath + s[0] + con.VidExtension);
                 }
 
+                // TODO Validate that start timestamp is actually less than end
                 try
                 {
                     segments[i].Start = new Timestamp(s[1]);
@@ -134,7 +142,7 @@
             return segments;
         }
 
-        internal static void run(string inputPath, Segment[] segments)
+        internal static void run(IO.IOPaths con, Segment[] segments)
         {
             // TODO Add support for encoding instead of copy
             
@@ -143,7 +151,7 @@
                 var process = new Process();
                 // Configure the process using the StartInfo properties.
                 process.StartInfo.FileName = "ffmpeg.exe";
-                process.StartInfo.Arguments = $"-ss {seg.Start} -to {seg.End} -i {inputPath} -c copy {seg.OutPath}";
+                process.StartInfo.Arguments = $"-ss {seg.Start} -to {seg.End} -i {IO.AddQuotes(con.InputVid)} -c copy {seg.OutPath}";
                 process.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
                 process.Start();
                 process.WaitForExit(); // Waits here for the process to exit.    

@@ -98,7 +98,7 @@ public static class IO
         return true;
     }
 
-    private static bool ValidatePath(ref string? path)
+    public static bool ValidatePath(ref string? path)
     {
         if (path is null)
         {
@@ -171,12 +171,32 @@ public static class IO
     }
     #endregion
 
-    private static string RemoveQuotes(string path)
+    /// <summary>
+    /// Removes leading and trailing quotes from a path string if they exist
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static string RemoveQuotes(string path)
     {
         if (path[0] == '"' && path[path.Length - 1] == '"')
         {
             return path.Substring(1, (path.Length - 2));
         }
+        return path;
+    }
+
+    /// <summary>
+    /// Add quotes to a path string
+    /// This is best practice in order for use in cojunction with ffmpeg
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static string AddQuotes(string path)
+    {
+        if (path[0] != '"')
+            path = '"' + path;
+        if (path[path.Length - 1] != '"')
+            path = path + '"';
         return path;
     }
 
@@ -190,6 +210,11 @@ public static class IO
          * -t <Path>    :   Timestamp file path
          */
         throw new NotImplementedException();
+    }
+
+    public static void printHelp()
+    {
+        Console.WriteLine();
     }
 }
 
