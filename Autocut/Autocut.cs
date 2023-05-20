@@ -10,18 +10,20 @@
 
         public Info()
         {
+            Name = "Autocut";
+            Version = "0.1.0";
         }
     }
 
     internal static class Autocut
     {
         public static readonly string ffmpegPath = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "FFmpeg" + Path.DirectorySeparatorChar + "ffmpeg.exe";
-        public static readonly Info info;
+        public static readonly Info info = new();
 
         public static void Main(string[] args)
         {
             IO.IOPaths con;
-            Console.Title = $"{info.Name}v{info.Version} | powered by FFmpeg";
+            Console.Title = $"{info.Name} v{info.Version} | powered by FFmpeg";
             if (ffmpegPath is null || !File.Exists(ffmpegPath))
             {
                 Console.WriteLine($"ERROR: Failed to find FFmpeg.exe. Expected FFmpeg at location {ffmpegPath!}");
