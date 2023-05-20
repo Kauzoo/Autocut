@@ -3,12 +3,31 @@
     using System.Diagnostics;
     using System.IO;
 
+    struct Info
+    {
+        public string Name = "Autocut";
+        public string Version = "0.1.0";
+
+        public Info()
+        {
+        }
+    }
+
     internal static class Autocut
     {
+        public static readonly string ffmpegPath = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "FFmpeg" + Path.DirectorySeparatorChar + "ffmpeg.exe";
+        public static readonly Info info;
+
         public static void Main(string[] args)
         {
             IO.IOPaths con;
-            Console.Title = "Autocut | powered by ffmpeg";
+            Console.Title = $"{info.Name}v{info.Version} | powered by FFmpeg";
+            if (ffmpegPath is null || !File.Exists(ffmpegPath))
+            {
+                Console.WriteLine($"ERROR: Failed to find FFmpeg.exe. Expected FFmpeg at location {ffmpegPath!}");
+                Console.ReadLine();
+                throw new Exception();
+            }
             if (args.Length == 0)
                 con = IO.ReadConsole();
             else
@@ -74,6 +93,7 @@
                 if (s.Length != 3)
                 {
                     Console.WriteLine($"ERROR: Failed to parse Segment at Line {i + 1}. To many or few elements");
+                    Console.ReadLine();
                     throw new FormatException();
                 }
 
@@ -89,6 +109,7 @@
                     if (!Path.HasExtension(segPath) || Path.GetExtension(segPath) != con.VidExtension)
                     {
                         Console.WriteLine($"ERROR: Missing file extension or non matching file extension");
+                        Console.ReadLine();
                         throw new FormatException();
                     }
 
@@ -108,8 +129,10 @@
                         }
                         catch (FormatException e)
                         {
+                            Console.ReadLine();
                             throw e;
                         }
+                        Console.ReadLine();
                         throw new FormatException();
                     }
 
@@ -125,6 +148,7 @@
                 catch (FormatException e)
                 {
                     Console.WriteLine($"ERROR: Failed to parse start Timestamp at Line {i + 1}. {e.Message}");
+                    Console.ReadLine();
                     throw;
                 }
 
@@ -135,6 +159,7 @@
                 catch (FormatException e)
                 {
                     Console.WriteLine($"ERROR: Failed to parse end Timestamp at Line {i + 1}. {e.Message}");
+                    Console.ReadLine();
                     throw;
                 }
             }
@@ -144,13 +169,13 @@
 
         internal static void run(IO.IOPaths con, Segment[] segments)
         {
-            // TODO Add support for encoding instead of copy
-            
+            // TODO Add support for encoding instead of only stream copy 
+
             foreach (var seg in segments)
             {
                 var process = new Process();
                 // Configure the process using the StartInfo properties.
-                process.StartInfo.FileName = Directory.GetCurrentDirectory() + Path.PathSeparator + "ffmpeg.exe";
+                process.StartInfo.FileName = ffmpegPath;
                 process.StartInfo.Arguments = $"-ss {seg.Start} -to {seg.End} -i {IO.AddQuotes(con.InputVid)} -c copy {seg.OutPath}";
                 process.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
                 process.Start();
