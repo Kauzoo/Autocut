@@ -150,7 +150,7 @@
             {
                 var process = new Process();
                 // Configure the process using the StartInfo properties.
-                process.StartInfo.FileName = "ffmpeg.exe";
+                process.StartInfo.FileName = Directory.GetCurrentDirectory() + Path.PathSeparator + "ffmpeg.exe";
                 process.StartInfo.Arguments = $"-ss {seg.Start} -to {seg.End} -i {IO.AddQuotes(con.InputVid)} -c copy {seg.OutPath}";
                 process.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
                 process.Start();
