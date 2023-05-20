@@ -18,7 +18,9 @@ Recommended / Required: .NET 7.0
 Usage
 -Required Parameters:	<InputVideo>	<TimespampFile>		<OutputPath>
 -For all required parameters a full path should be provided
--TimestampFile:	files are expected as .tsv files (Google Sheets can be exported as .tsv)
+-InputVideo:	Full path to a video file from which you want to extract segments
+-TimestampFile:	Files are expected as .tsv files (Google Sheets can be exported as .tsv)
+-OutputPath:	Full path of a directory into which the output files should be written
 (-Pro Tip: If you Drag&Drop Files onto a Terminal Window the Path to that file will automatically be copied)
 
 
