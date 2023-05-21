@@ -68,6 +68,15 @@
 
             private bool Validate(string time) => (time.Length == 2 && char.IsDigit(time[0]) && char.IsDigit(time[1]));
 
+            public bool IsGreaterThan(Timestamp t)
+            {
+                
+            }
+
+            public int ToNumber() => int.Parse(Stringify());
+
+            public string Stringify() => Hour + Minute + Second;  
+
             public override string ToString() => $"{Hour}:{Minute}:{Second}";
         }
 
@@ -157,6 +166,7 @@
                 try
                 {
                     segments[i].End = new Timestamp(s[2]);
+                    if (segments[i].End )
                 }
                 catch (FormatException e)
                 {
