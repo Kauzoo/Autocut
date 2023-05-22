@@ -68,10 +68,11 @@
 
             private bool Validate(string time) => (time.Length == 2 && char.IsDigit(time[0]) && char.IsDigit(time[1]));
 
-            public bool IsGreaterThan(Timestamp t)
-            {
-                
-            }
+            public static bool operator <(Timestamp t1, Timestamp t2) => t1.ToNumber() < t2.ToNumber();
+            public static bool operator >(Timestamp t1, Timestamp t2) => t1.ToNumber() > t2.ToNumber();
+
+            public static bool operator <=(Timestamp t1, Timestamp t2) => t1.ToNumber() <= t2.ToNumber();
+            public static bool operator >=(Timestamp t1, Timestamp t2) => t1.ToNumber() >= t2.ToNumber();
 
             public int ToNumber() => int.Parse(Stringify());
 
@@ -151,7 +152,6 @@
                     segments[i].OutPath = IO.AddQuotes(con.Outpath + s[0] + con.VidExtension);
                 }
 
-                // TODO Validate that start timestamp is actually less than end
                 try
                 {
                     segments[i].Start = new Timestamp(s[1]);
@@ -166,7 +166,11 @@
                 try
                 {
                     segments[i].End = new Timestamp(s[2]);
-                    if (segments[i].End )
+                    if (segments[i].End <= segments[i].Start)
+                    {
+                        Console.WriteLine($"ERROR: End-Timestamp {segments[i].End} is equal or less than Start-Timestamp {segments[i].Start} at Line {i + 1}");
+                        Console.ReadLine();
+                    }
                 }
                 catch (FormatException e)
                 {
