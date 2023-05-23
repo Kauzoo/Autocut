@@ -218,6 +218,37 @@ public static class IO
     }
 }
 
+public interface IAutoPath
+{
+
+}
+
+public interface IAutoFile
+{
+
+}
+
+public interface IAutoDirectory
+{
+    
+}
+
+public struct FFDirectory : IAutoPath
+{
+    string path;
+
+}
+
+public struct FFFile : IAutoPath
+{
+
+}
+
+public struct InternalPath
+{
+
+}
+
 public enum VidExtension
 {
     mp4
