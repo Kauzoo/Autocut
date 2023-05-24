@@ -204,14 +204,44 @@ public static class IO
     {
         /**
          * Planned args:
-         * -h --help    :   Show help print
-         * -i <Path>    :   Input vid path
-         * -o <Path>    :   Output (Folder) path
-         * -t <Path>    :   Timestamp file path
+         * -h --help    :   Show help print         
+         * -i <Path>    :   Input vid path          [Required argument]
+         * -o <Path>    :   Output (Folder) path    [Required argument]
+         * -t <Path>    :   Timestamp file path     [Required argument]
          */
+         bool inputVidFlag, outputFlag, timestampFlag;
+
+        // Parse help
+         if (args.Contains("-h") || args.Contains("--help"))
+         {
+            printHelp();
+         }
+         // Parse required arguments
+         for (var i = 0; i < args.Length; i++)
+         {
+            switch(args[i])
+            {
+
+                case "-i":
+                    if (i + 1 >= args.Length)
+                    {
+                        Console.
+                    }
+                    ValidateVidPath(args[i + 1])
+                    break;
+                case "-o":
+                    break;
+                case "-t":
+                    break;
+            }
+
+         }
+
+
         throw new NotImplementedException();
     }
 
+    private static string 
     public static void printHelp()
     {
         throw new NotImplementedException();
