@@ -72,7 +72,7 @@ public static class IO
 
     #region Validation
 
-    private static bool ValidateFilePath(ref string? path)
+    public static bool ValidateFilePath(ref string? path)
     {
         if (path is null)
         {
