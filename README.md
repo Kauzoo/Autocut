@@ -9,7 +9,7 @@ Autocut v0.1.0
 
 @Author Nyr
 Git Repo:	https://github.com/Kauzoo/Autocut
-Discord:	Kauzoo#2997
+Discord:	@kauzoo
 
 This is a Tool powered by FFmpeg intended to automate the extraction of video segments based of Timestamps. More features to come (probably).
 For now Autocut (Release) comes bundled with a prebuilt FFmpeg executable (for which I probably don't pass the LGPL Requirements rn, oops),
