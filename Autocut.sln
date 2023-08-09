@@ -1,6 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autocut", "Autocut\Autocut.csproj", "{A229F970-309F-4226-A664-143BE05EED43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowSplit", "ShadowSplit\ShadowSplit.csproj", "{287713B2-E2FD-4B9C-BC82-996074F907A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fftoolslib", "fftoolslib\fftoolslib.csproj", "{E39927A1-D383-4DA3-95B4-5E7AEA6D0844}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +17,13 @@ Global
 		{A229F970-309F-4226-A664-143BE05EED43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A229F970-309F-4226-A664-143BE05EED43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A229F970-309F-4226-A664-143BE05EED43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{287713B2-E2FD-4B9C-BC82-996074F907A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{287713B2-E2FD-4B9C-BC82-996074F907A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{287713B2-E2FD-4B9C-BC82-996074F907A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{287713B2-E2FD-4B9C-BC82-996074F907A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E39927A1-D383-4DA3-95B4-5E7AEA6D0844}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E39927A1-D383-4DA3-95B4-5E7AEA6D0844}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E39927A1-D383-4DA3-95B4-5E7AEA6D0844}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E39927A1-D383-4DA3-95B4-5E7AEA6D0844}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -195,8 +195,8 @@ public static class IO
     {
         if (path[0] != '"')
             path = '"' + path;
-        if (path[path.Length - 1] != '"')
-            path = path + '"';
+        if (path[^1] != '"')
+            path += '"';
         return path;
     }
 
