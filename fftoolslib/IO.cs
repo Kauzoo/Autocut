@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace fftoolslib;
 
@@ -60,6 +61,35 @@ public class PathHelpers
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Split a string into substring using space as delim. 
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static string[] SplitPaths(string? input)
+    {
+        if (input is null)
+            throw new ArgumentNullException(nameof(input));
+
+        List<string> buf = new();
+        List<char> wordbuf = new(200);
+        int i = 0;
+        while (true)
+        {
+            // Skip over whitespace
+            if (input[i++] == ' ')
+                continue;
+            // Iterate over a string
+            char delim = (input[i] == '"') ? '"' : ' ';
+            while (input[i] != delim && i < input.Length)
+            {
+                wordbuf.Add(input[i++]);
+            }
+            buf.Add(string.Join("", wordbuf.ToArray()));
+        }
     }
 
     public static bool ValidateVidPath(ref string? path)
