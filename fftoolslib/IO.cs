@@ -4,6 +4,12 @@ namespace fftoolslib;
 
 public class PathHelpers
 {
+    /// <summary>
+    /// Validate that a (File)path exists, is fully qualified and not null.
+    /// Also removes quotes.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns>true if all checks pass; false if any checks fail</returns>
     public static bool ValidateFilePath(ref string? path)
     {
         if (path is null)
