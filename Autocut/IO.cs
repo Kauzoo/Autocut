@@ -31,7 +31,7 @@ public static class IO
             VidExtension = vidExtension;
         }
     }
-    
+
     public static IOPaths ReadConsole()
     {
         Console.WriteLine("Welcome to Autocut");
@@ -200,6 +200,8 @@ public static class IO
         return path;
     }
 
+
+    // TODO Wip
     public static IOPaths ParseCommandLineArguments(string[] args)
     {
         /**
@@ -209,17 +211,17 @@ public static class IO
          * -o <Path>    :   Output (Folder) path    [Required argument]
          * -t <Path>    :   Timestamp file path     [Required argument]
          */
-         bool inputVidFlag, outputFlag, timestampFlag;
+        /* bool inputVidFlag, outputFlag, timestampFlag;
 
         // Parse help
-         if (args.Contains("-h") || args.Contains("--help"))
-         {
+        if (args.Contains("-h") || args.Contains("--help"))
+        {
             printHelp();
-         }
-         // Parse required arguments
-         for (var i = 0; i < args.Length; i++)
-         {
-            switch(args[i])
+        }
+        // Parse required arguments
+        for (var i = 0; i < args.Length; i++)
+        {
+            switch (args[i])
             {
 
                 case "-i":
@@ -235,13 +237,11 @@ public static class IO
                     break;
             }
 
-         }
-
+        } */
 
         throw new NotImplementedException();
     }
 
-    private static string 
     public static void printHelp()
     {
         throw new NotImplementedException();
@@ -260,7 +260,7 @@ public interface IAutoFile
 
 public interface IAutoDirectory
 {
-    
+
 }
 
 public struct FFDirectory : IAutoPath
