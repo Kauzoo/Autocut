@@ -69,7 +69,7 @@ public class PathHelpers
     /// <param name="input"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static string[] SplitPaths(string? input)
+    public static string[] SplitInput(string? input)
     {
         if (input is null)
             throw new ArgumentNullException(nameof(input));
@@ -77,7 +77,7 @@ public class PathHelpers
         List<string> buf = new();
         List<char> wordbuf = new(200);
         int i = 0;
-        while (true)
+        while (i < input.Length)
         {
             // Skip over whitespace
             if (input[i++] == ' ')
@@ -90,6 +90,17 @@ public class PathHelpers
             }
             buf.Add(string.Join("", wordbuf.ToArray()));
         }
+        return buf.ToArray();
+    }
+
+    public static string[] SplitPaths(string? path)
+    {
+        var paths = SplitInput(path);
+        for (int i = 0; i < paths.Length; i++)
+        {
+            paths[i] = RemoveQuotes(paths[i]);
+        }
+        return paths;
     }
 
     public static bool ValidateVidPath(ref string? path)
@@ -122,6 +133,17 @@ public class PathHelpers
     }
 
     /// <summary>
+    /// Removes leading and trailing quotes from a path string if they exist
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static void RemoveQuotes(ref string path)
+    {
+        if (path[0] == '"' && path[^1] == '"')
+            path = path[1..^1];
+    }
+
+    /// <summary>
     /// Add quotes to a path string
     /// This is best practice in order for use in cojunction with ffmpeg
     /// </summary>
@@ -134,5 +156,19 @@ public class PathHelpers
         if (path[^1] != '"')
             path += '"';
         return path;
+    }
+
+    /// <summary>
+    /// Add quotes to a path string
+    /// This is best practice in order for use in cojunction with ffmpeg
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static void AddQuotes(ref string path)
+    {
+        if (path[0] != '"')
+            path = '"' + path;
+        if (path[^1] != '"')
+            path += '"';
     }
 }
