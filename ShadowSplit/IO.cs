@@ -35,15 +35,38 @@ public class IO
         catch (ArgumentNullException ex)
         {
             Console.WriteLine(ex);
+            ReadInputVids();
         }
     }
 
-    public static void ParseArguments()
+    public static void ParseArguments(string[] arguments)
     {
+        // TODO Add options parsing
         /**
             -r: Search trough subdirectories
             -f:<extension>: Filter for specified file extension (maybe later)
         */
+        List<string> args = new List<string>();
+        string current_filter_extension = ".mp4";
+        bool include_sub_dir = false;
+        for (int i = 0; i < arguments.Length; i++)
+        {
+            /* if (arguments[i] == "-r")
+            {
+                include_sub_dir = true;
+                i++;
+            } */
+
+            if (Directory.Exists(arguments[i]))
+            {
+                args.AddRange(Directory.EnumerateFiles(arguments[i], "*.mp4"));
+                continue;
+            }
+            if (Path.GetExtension(arguments[i]) == current_filter_extension)
+            {
+                args.Add(arguments[i]);
+            }
+        }
     }
 }
 

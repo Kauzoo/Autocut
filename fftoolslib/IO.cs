@@ -93,14 +93,16 @@ public class PathHelpers
         return buf.ToArray();
     }
 
-    public static string[] SplitPaths(string? path)
+    public static List<string> SplitPaths(string? path)
     {
-        var paths = SplitInput(path);
-        for (int i = 0; i < paths.Length; i++)
-        {
-            paths[i] = RemoveQuotes(paths[i]);
-        }
+        var paths = new List<string>(SplitInput(path));
+        paths.RemoveAll(p => !ValidatePath(path: ref p));
         return paths;
+    }
+
+    public static void FindFiles()
+    {
+        throw new NotImplementedException();
     }
 
     public static bool ValidateVidPath(ref string? path)
